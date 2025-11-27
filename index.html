@@ -3,6 +3,9 @@
   <head>
     <meta charset="UTF-8">
     <title>Dice Rollar</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="https://favicon.io/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://favicon.io/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://favicon.io/favicon-16x16.png">
     <link rel="stylesheet" href="style.css">
   </head>
 
@@ -15,6 +18,11 @@
 
         <div id="diceResult"></div>
         <div id="diceImages"></div>
+        <div id="historyContainer">
+            <h2>Roll History <button onclick="clearHistory()">Clear History</button></h2>
+            <ul id="historyList"></ul>
+        </div>
+        <audio id="diceRollSound" src="sound/ShakeRollSound2.mp3"></audio>
     </div>
     <script src="index.js"></script>
   </body>
