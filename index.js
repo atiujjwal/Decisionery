@@ -1,9 +1,15 @@
+// Global State
+let currentListIndex = 0;
+let isRolling = false;
+let isEditingNew = false; // Flag to track if we are creating a fresh list
+
 document.addEventListener('DOMContentLoaded', () => {
-    loadLists();
-    handleListChange();
+    // Reset any old legacy data
+    ensureDefaultData();
+    renderSidebar();
+    loadCurrentList();
 });
 
-// --- State Management ---
 function getLists() {
     const listsJSON = localStorage.getItem('decisionLists');
     return listsJSON ? JSON.parse(listsJSON) : [];
@@ -13,254 +19,211 @@ function saveLists(lists) {
     localStorage.setItem('decisionLists', JSON.stringify(lists));
 }
 
-// --- Initialization & UI Loading ---
-function loadLists() {
-    const lists = getLists();
-    const select = document.getElementById('decisionLists');
-    const currentVal = select.value;
-
-    select.innerHTML = '';
-
-    // Initialize Default if empty
+function ensureDefaultData() {
+    let lists = getLists();
     if (lists.length === 0) {
-        const defaultList = {
-            title: 'What to Eat? (Example)',
-            options: ['Pizza 🍕', 'Burgers 🍔', 'Sushi 🍣', 'Salad 🥗', 'Tacos 🌮'],
-            locked: true // <--- THIS MAKES IT UNDELETABLE
-        };
-        lists.push(defaultList);
+        lists.push({
+            title: 'What to Eat? 🍕',
+            options: ['Pizza', 'Burgers', 'Sushi', 'Salad', 'Tacos'],
+            locked: true
+        });
         saveLists(lists);
-    }
-
-    // Populate Dropdown
-    lists.forEach((list, index) => {
-        const option = document.createElement('option');
-        option.value = index;
-        // Add a lock icon visually if it is locked
-        option.textContent = list.locked ? `🔒 ${list.title}` : list.title;
-        select.appendChild(option);
-    });
-
-    // Create New Option
-    const createNewOption = document.createElement('option');
-    createNewOption.value = 'new';
-    createNewOption.textContent = '+ Create New List';
-    select.appendChild(createNewOption);
-
-    // Restore selection or default to 0
-    if (currentVal && currentVal !== 'new' && lists[currentVal]) {
-        select.value = currentVal;
-    } else {
-        select.value = 0;
     }
 }
 
-// --- Core Logic: Rolling ---
-let isRolling = false;
+// --- Sidebar Logic ---
+
+function renderSidebar() {
+    const lists = getLists();
+    const container = document.getElementById('sidebarListContainer');
+    container.innerHTML = '';
+
+    lists.forEach((list, index) => {
+        const div = document.createElement('div');
+        div.className = `nav-item ${index === currentListIndex ? 'active' : ''}`;
+
+        // Add lock icon if locked
+        const icon = list.locked ? '<i class="fa-solid fa-lock" style="font-size:0.8em; opacity:0.5;"></i> ' : '';
+        div.innerHTML = `${icon}${list.title}`;
+
+        div.onclick = () => switchList(index);
+        container.appendChild(div);
+    });
+}
+
+function switchList(index) {
+    currentListIndex = index;
+    renderSidebar(); // Update active class
+    loadCurrentList(); // Update main stage
+    document.getElementById('decisionResult').innerHTML = '<span class="placeholder">Ready?</span>';
+}
+
+// --- Main Stage Logic ---
+
+function loadCurrentList() {
+    const lists = getLists();
+    // Safety check if index out of bounds
+    if (!lists[currentListIndex]) currentListIndex = 0;
+
+    const list = lists[currentListIndex];
+    document.getElementById('currentListTitle').textContent = list.title;
+}
 
 function makeDecision() {
-    if (isRolling) return; // Prevent double clicks
+    if (isRolling) return;
 
     const lists = getLists();
-    const selectedIndex = document.getElementById('decisionLists').value;
-
-    // Safety check
-    if (selectedIndex === 'new') {
-        toggleEditMode(true);
-        return;
-    }
-
-    const list = lists[selectedIndex];
+    const list = lists[currentListIndex];
     const options = list.options;
     const resultBox = document.getElementById('decisionResult');
+    const rollBtn = document.getElementById('rollBtn');
 
     isRolling = true;
-    const btn = document.getElementById('rollBtn');
-    btn.disabled = true;
-    btn.textContent = "Rolling...";
+    rollBtn.disabled = true;
+    rollBtn.textContent = "Rolling...";
+    resultBox.style.opacity = 1;
 
-    // Animation Logic: Shuffle through options
     let steps = 0;
-    const maxSteps = 20; // How many shuffles before stopping
-    const speed = 100; // Speed in ms
-
+    const maxSteps = 20;
     const interval = setInterval(() => {
-        const tempIndex = Math.floor(Math.random() * options.length);
-        resultBox.textContent = options[tempIndex];
-        resultBox.style.opacity = 0.5; // Visual effect
+        const temp = options[Math.floor(Math.random() * options.length)];
+        resultBox.textContent = temp;
+        resultBox.style.opacity = 0.5;
         steps++;
-
         if (steps >= maxSteps) {
             clearInterval(interval);
             finalizeDecision(list, options, resultBox);
         }
-    }, speed);
+    }, 80);
 }
 
 function finalizeDecision(list, options, resultBox) {
-    const finalIndex = Math.floor(Math.random() * options.length);
-    const decision = options[finalIndex];
-
-    resultBox.textContent = decision;
+    const finalChoice = options[Math.floor(Math.random() * options.length)];
+    resultBox.textContent = finalChoice;
     resultBox.style.opacity = 1;
     resultBox.style.transform = "scale(1.1)";
     setTimeout(() => resultBox.style.transform = "scale(1)", 200);
 
-    addToHistory(list.title, decision);
-
-    // Reset State
+    addToHistory(list.title, finalChoice);
     isRolling = false;
-    const btn = document.getElementById('rollBtn');
-    btn.disabled = false;
-    btn.textContent = "Decide for me";
+    const rollBtn = document.getElementById('rollBtn');
+    rollBtn.disabled = false;
+    rollBtn.textContent = "Decide for me";
 }
 
 function addToHistory(title, result) {
-    const historyList = document.getElementById('historyList');
+    const ul = document.getElementById('historyList');
     const li = document.createElement('li');
     li.innerHTML = `<span>${title}</span> <strong>${result}</strong>`;
-    historyList.prepend(li);
+    ul.prepend(li);
 }
 
 function toggleHistory() {
     document.getElementById('historyList').classList.toggle('hidden');
+    document.getElementById('historyArrow').classList.toggle('fa-chevron-up');
+    document.getElementById('historyArrow').classList.toggle('fa-chevron-down');
 }
 
-// --- Editor Logic ---
+function clearHistory() {
+    const list = document.getElementById('historyList');
+    if (list.children.length === 0) return;
 
-function handleListChange() {
-    const val = document.getElementById('decisionLists').value;
-    if (val === 'new') {
-        // Prepare editor for new list
-        document.getElementById('listTitle').value = '';
-        document.getElementById('optionsContainer').innerHTML = '';
-        addOptionInput();
-        addOptionInput();
-        toggleEditMode(true);
+    if (confirm("Clear your roll history?")) {
+        list.innerHTML = '';
+        // If the list was hidden, you might want to open it, 
+        // or just leave it. For now, we leave it as is.
     }
 }
 
-function toggleEditMode(forceOpen = false) {
-    const overlay = document.getElementById('editorOverlay');
+// --- Editor / Modal Logic ---
+
+function openCreateMode() {
+    isEditingNew = true;
+    document.getElementById('modalTitle').textContent = "Create New List";
+    document.getElementById('listTitleInput').value = "";
+    document.getElementById('deleteBtn').style.display = "none"; // Can't delete what doesn't exist yet
+
+    const container = document.getElementById('optionsContainer');
+    container.innerHTML = '';
+    addOptionInput();
+    addOptionInput();
+
+    document.getElementById('editorOverlay').classList.remove('hidden');
+}
+
+function openEditMode() {
+    isEditingNew = false;
     const lists = getLists();
-    const select = document.getElementById('decisionLists');
-    const selectedIndex = select.value;
-    const deleteBtn = document.getElementById('deleteBtn'); // Get the button
+    const list = lists[currentListIndex];
 
-    // If opening...
-    if ((!overlay.classList.contains('hidden') === false) || forceOpen) {
-        if (selectedIndex !== 'new' && lists[selectedIndex]) {
-            const list = lists[selectedIndex];
-            document.getElementById('listTitle').value = list.title;
+    document.getElementById('modalTitle').textContent = "Edit List";
+    document.getElementById('listTitleInput').value = list.title;
 
-            // --- NEW LOGIC: Hide Delete Button if Locked ---
-            if (list.locked) {
-                deleteBtn.style.display = 'none'; // Hide it
-            } else {
-                deleteBtn.style.display = 'block'; // Show it
-            }
-            // -----------------------------------------------
-
-            const container = document.getElementById('optionsContainer');
-            container.innerHTML = '';
-            list.options.forEach(opt => addOptionInput(opt));
-        } else {
-            // New List Mode: Always show delete (or cancel) logic
-            deleteBtn.style.display = 'none'; // Optional: hide delete for new lists until saved
-        }
-        overlay.classList.remove('hidden');
+    const deleteBtn = document.getElementById('deleteBtn');
+    if (list.locked) {
+        deleteBtn.style.display = 'none';
     } else {
-        // Closing
-        overlay.classList.add('hidden');
-        if (selectedIndex === 'new') {
-            select.value = 0;
-        }
+        deleteBtn.style.display = 'block';
     }
+
+    const container = document.getElementById('optionsContainer');
+    container.innerHTML = '';
+    list.options.forEach(opt => addOptionInput(opt));
+
+    document.getElementById('editorOverlay').classList.remove('hidden');
 }
 
-function addOptionInput(value = '') {
+function closeModal() {
+    document.getElementById('editorOverlay').classList.add('hidden');
+}
+
+function addOptionInput(val = '') {
     const container = document.getElementById('optionsContainer');
     const div = document.createElement('div');
     div.className = 'option-input-wrapper';
-
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.value = value;
-    input.placeholder = 'Enter option...';
-
-    const btn = document.createElement('button');
-    btn.innerHTML = '<i class="fa-solid fa-trash"></i>'; // FontAwesome Icon
-    btn.className = 'remove-option-btn';
-    btn.onclick = () => div.remove();
-
-    div.appendChild(input);
-    div.appendChild(btn);
+    div.innerHTML = `
+        <input type="text" value="${val}" placeholder="Option...">
+        <button class="remove-option-btn" onclick="this.parentElement.remove()"><i class="fa-solid fa-trash"></i></button>
+    `;
     container.appendChild(div);
 }
 
 function saveList() {
-    const title = document.getElementById('listTitle').value.trim();
+    const title = document.getElementById('listTitleInput').value.trim();
     const inputs = document.querySelectorAll('#optionsContainer input');
     const options = Array.from(inputs).map(i => i.value.trim()).filter(v => v);
 
     if (!title || options.length < 2) {
-        alert("Please provide a title and at least 2 options.");
+        alert("Title and at least 2 options required.");
         return;
     }
 
     const lists = getLists();
-    const select = document.getElementById('decisionLists');
-    let selectedIndex = select.value;
 
-    // Check if we are editing an existing list to preserve its 'locked' status
-    let isLocked = false;
-    if (selectedIndex !== 'new' && lists[selectedIndex]) {
-        isLocked = lists[selectedIndex].locked || false;
-    }
-
-    const newList = {
-        title,
-        options,
-        locked: isLocked // Preserve the lock status
-    };
-
-    if (selectedIndex === 'new') {
-        lists.push(newList);
-        selectedIndex = lists.length - 1;
+    if (isEditingNew) {
+        lists.push({ title, options, locked: false });
+        currentListIndex = lists.length - 1; // Switch to new list
     } else {
-        lists[selectedIndex] = newList;
+        // Preserve lock status if editing existing
+        const lockedStatus = lists[currentListIndex].locked || false;
+        lists[currentListIndex] = { title, options, locked: lockedStatus };
     }
 
     saveLists(lists);
-    loadLists();
-
-    document.getElementById('decisionLists').value = selectedIndex;
-    toggleEditMode(false);
+    renderSidebar();
+    loadCurrentList();
+    closeModal();
 }
 
 function deleteList() {
-    const select = document.getElementById('decisionLists');
-    const index = select.value;
-    const lists = getLists();
-
-    // Safety Check: If it's the new option or the list is locked
-    if (index === 'new') {
-        toggleEditMode(false);
-        select.value = 0;
-        return;
-    }
-
-    // --- SECURITY CHECK ---
-    if (lists[index].locked) {
-        alert("This example list cannot be deleted.");
-        return;
-    }
-    // ----------------------
-
-    if (confirm("Delete this list?")) {
-        lists.splice(index, 1);
+    if (confirm("Are you sure you want to delete this list?")) {
+        const lists = getLists();
+        lists.splice(currentListIndex, 1);
         saveLists(lists);
-        loadLists();
-        toggleEditMode(false);
+
+        currentListIndex = 0; // Reset to default
+        renderSidebar();
+        loadCurrentList();
+        closeModal();
     }
 }

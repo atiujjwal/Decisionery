@@ -1,15 +1,14 @@
 :root {
     --primary: #6366f1;
-    /* Indigo */
+    --primary-light: #e0e7ff;
     --primary-hover: #4f46e5;
-    --bg-gradient: linear-gradient(135deg, #e0e7ff 0%, #f3f4f6 100%);
+    --bg-main: #f3f4f6;
     --surface: #ffffff;
-    --text-main: #1f2937;
+    --text-main: #111827;
     --text-muted: #6b7280;
-    --danger: #ef4444;
     --border: #e5e7eb;
     --radius: 16px;
-    --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    --sidebar-width: 260px;
 }
 
 * {
@@ -20,190 +19,285 @@
 
 body {
     font-family: 'Inter', sans-serif;
-    background: var(--bg-gradient);
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    background: var(--bg-main);
     color: var(--text-main);
+    height: 100vh;
+    overflow: hidden;
+    /* Prevent body scroll, let containers scroll */
 }
 
-/* --- Layout --- */
-.app-container {
-    width: 100%;
-    max-width: 480px;
-    padding: 20px;
-    position: relative;
+/* --- Layout Grid --- */
+.app-layout {
+    display: grid;
+    grid-template-columns: var(--sidebar-width) 1fr;
+    height: 100vh;
 }
 
-.card {
+/* --- Sidebar Styling --- */
+.sidebar {
     background: var(--surface);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    padding: 30px;
-    transition: transform 0.2s;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
 }
 
-/* --- Header --- */
-.card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
+.sidebar-header {
+    margin-bottom: 25px;
 }
 
 .logo {
     font-weight: 800;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     color: var(--primary);
     display: flex;
     align-items: center;
-    gap: 8px;
-}
-
-.controls {
-    display: flex;
     gap: 10px;
 }
 
-select {
-    padding: 8px 12px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: #f9fafb;
-    font-family: inherit;
-    color: var(--text-main);
-    cursor: pointer;
-    max-width: 150px;
-}
-
-/* --- The Stage (Result) --- */
-.stage {
-    min-height: 150px;
+.create-btn {
+    width: 100%;
+    background: var(--text-main);
+    color: white;
+    padding: 12px;
+    border-radius: 10px;
+    font-weight: 600;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 30px;
+    gap: 8px;
+    transition: all 0.2s;
 }
 
-.result-box {
-    font-size: 2.5rem;
-    font-weight: 800;
-    text-align: center;
-    line-height: 1.2;
+.create-btn:hover {
+    background: black;
+    transform: translateY(-1px);
+}
+
+.list-label {
+    margin-top: 30px;
+    margin-bottom: 10px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.list-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    overflow-y: auto;
+}
+
+.nav-item {
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    transition: all 0.2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-item:hover {
+    background: var(--bg-main);
     color: var(--text-main);
 }
 
-.result-box .placeholder {
-    font-size: 1.5rem;
-    color: var(--text-muted);
-    font-weight: 400;
+.nav-item.active {
+    background: var(--primary-light);
+    color: var(--primary);
+    font-weight: 600;
 }
 
-/* --- Buttons --- */
-button {
-    cursor: pointer;
-    border: none;
-    font-family: inherit;
-    transition: all 0.2s ease;
+/* --- Main Content Styling --- */
+.main-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.card {
+    background: var(--surface);
+    width: 100%;
+    max-width: 500px;
+    padding: 40px;
+    border-radius: var(--radius);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+    border-bottom: 1px solid var(--bg-main);
+    padding-bottom: 20px;
+}
+
+.card-header h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.stage {
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 40px;
+}
+
+.result-box {
+    font-size: 2.2rem;
+    font-weight: 800;
+    text-align: center;
+    color: var(--text-main);
 }
 
 .primary-btn {
     background: var(--primary);
     color: white;
     width: 100%;
-    padding: 16px;
+    padding: 18px;
     font-size: 1.1rem;
     font-weight: 600;
     border-radius: 12px;
-    box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.4);
+    border: none;
+    box-shadow: 0 4px 15px -3px rgba(99, 102, 241, 0.4);
+    cursor: pointer;
+    transition: transform 0.1s;
 }
 
 .primary-btn:hover {
     background: var(--primary-hover);
-    transform: translateY(-1px);
 }
 
 .primary-btn:active {
-    transform: translateY(1px);
+    transform: scale(0.98);
 }
 
-.secondary-btn {
-    background: #f3f4f6;
-    color: var(--text-main);
-    padding: 10px;
-    border-radius: 8px;
-    font-weight: 600;
+/* --- History --- */
+.history-section {
+    margin-top: 30px;
+    border-top: 1px solid var(--bg-main);
+    padding-top: 15px;
 }
 
-.secondary-btn:hover {
-    background: #e5e7eb;
+.history-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.danger-btn {
-    background: #fee2e2;
-    color: var(--danger);
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-weight: 600;
-}
-
-.danger-btn:hover {
-    background: #fecaca;
-}
-
-.icon-btn {
-    background: transparent;
+/* The Left side (Expand/Collapse) */
+.history-toggle-btn {
+    background: none;
+    border: none;
     color: var(--text-muted);
-    font-size: 1.2rem;
-    padding: 5px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    padding: 5px 0;
 }
 
-.icon-btn:hover {
+.history-toggle-btn:hover {
     color: var(--primary);
 }
 
-.text-btn {
-    background: transparent;
-    color: var(--text-muted);
+/* The Right side (Clear Button) */
+.clear-history-btn {
+    background: none;
+    border: none;
+    color: #ef4444;
+    /* Red */
+    cursor: pointer;
     font-size: 0.9rem;
-    margin-top: 10px;
+    padding: 5px;
+    opacity: 0.6;
+    transition: opacity 0.2s;
 }
 
-.text-btn:hover {
+.clear-history-btn:hover {
+    opacity: 1;
+    background: #fee2e2;
+    border-radius: 4px;
+}
+
+.history-list {
+    list-style: none;
+    margin-top: 10px;
+    max-height: 120px;
+    overflow-y: auto;
+    font-size: 0.9rem;
+}
+
+.history-list.hidden {
+    display: none;
+}
+
+.history-list li {
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--border);
+    display: flex;
+    justify-content: space-between;
+    color: var(--text-muted);
+    animation: fadeIn 0.3s ease;
+}
+
+.history-list li strong {
     color: var(--text-main);
 }
 
-/* --- Editor Overlay --- */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- Editor Modal --- */
 .editor-overlay {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(5px);
-    z-index: 10;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px;
-    border-radius: var(--radius);
-    opacity: 1;
-    transition: opacity 0.3s ease;
+    z-index: 100;
+    backdrop-filter: blur(4px);
 }
 
 .editor-overlay.hidden {
-    opacity: 0;
-    pointer-events: none;
+    display: none;
 }
 
 .editor-card {
     background: white;
-    width: 100%;
-    height: 100%;
+    width: 90%;
+    max-width: 450px;
+    border-radius: 16px;
+    padding: 25px;
     display: flex;
     flex-direction: column;
+    max-height: 85vh;
 }
 
 .editor-header {
@@ -214,8 +308,8 @@ button {
 }
 
 .editor-body {
-    flex: 1;
     overflow-y: auto;
+    flex: 1;
     padding-bottom: 20px;
 }
 
@@ -223,37 +317,19 @@ button {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-top: 15px;
+    padding-top: 20px;
     border-top: 1px solid var(--border);
-    gap: 20px;
+    gap: 15px;
 }
 
-
-/* --- Form Elements --- */
-.form-group {
-    margin-bottom: 20px;
-}
-
-label {
-    display: block;
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    margin-bottom: 5px;
-    font-weight: 600;
-}
-
+/* Form inputs styling from previous step */
 input[type="text"] {
     width: 100%;
     padding: 12px;
     border: 1px solid var(--border);
     border-radius: 8px;
-    font-size: 1rem;
     outline: none;
-}
-
-input[type="text"]:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    margin-bottom: 10px;
 }
 
 .option-input-wrapper {
@@ -263,44 +339,77 @@ input[type="text"]:focus {
 }
 
 .remove-option-btn {
-    background: transparent;
-    color: var(--text-muted);
-    font-size: 1rem;
-    padding: 0 10px;
+    background: none;
+    border: none;
+    color: #ef4444;
+    cursor: pointer;
 }
 
-.remove-option-btn:hover {
-    color: var(--danger);
-}
-
-/* --- History --- */
-.history-toggle {
-    text-align: center;
-    margin-top: 15px;
-}
-
-.history-list {
-    list-style: none;
-    margin-top: 15px;
-    border-top: 1px solid var(--border);
-    padding-top: 15px;
-    max-height: 150px;
-    overflow-y: auto;
-    font-size: 0.9rem;
-    color: var(--text-muted);
-}
-
-.history-list.hidden {
-    display: none;
-}
-
-.history-list li {
-    padding: 5px 0;
-    border-bottom: 1px dashed var(--border);
-    display: flex;
-    justify-content: space-between;
-}
-
-.full-width {
+.secondary-btn {
+    background: var(--bg-main);
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
     width: 100%;
+    font-weight: 600;
+}
+
+.danger-btn {
+    background: #fee2e2;
+    color: #ef4444;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+/* --- Mobile Responsive --- */
+@media (max-width: 768px) {
+    .app-layout {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+    }
+
+    .sidebar {
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        padding: 15px;
+    }
+
+    .sidebar-actions {
+        display: none;
+        /* Hide big create button on mobile to save space, maybe add floating btn later */
+    }
+
+    .list-label {
+        display: none;
+    }
+
+    .list-nav {
+        flex-direction: row;
+        overflow-x: auto;
+        padding-bottom: 5px;
+    }
+
+    .nav-item {
+        white-space: nowrap;
+        flex-shrink: 0;
+        background: var(--bg-main);
+        margin-right: 10px;
+    }
+
+    .card {
+        box-shadow: none;
+        padding: 20px;
+    }
 }

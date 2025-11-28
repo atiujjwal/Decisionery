@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Decision Maker</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap"
       rel="stylesheet"
     />
     <link
@@ -15,50 +15,75 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div class="app-container">
-      <div class="card">
-        <header class="card-header">
-          <div class="logo">
-            <i class="fa-solid fa-dice-d20"></i> Decision Maker
-          </div>
-          <div class="controls">
-            <select id="decisionLists" onchange="handleListChange()"></select>
+    <div class="app-layout">
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <div class="logo"><i class="fa-solid fa-dice-d20"></i> Decider</div>
+        </div>
+
+        <div class="sidebar-actions">
+          <button class="create-btn" onclick="openCreateMode()">
+            <i class="fa-solid fa-plus"></i> New List
+          </button>
+        </div>
+
+        <div class="list-label">MY LISTS</div>
+        <div id="sidebarListContainer" class="list-nav"></div>
+      </aside>
+
+      <main class="main-content">
+        <div class="card">
+          <header class="card-header">
+            <h2 id="currentListTitle">Loading...</h2>
             <button
               class="icon-btn"
-              onclick="toggleEditMode()"
-              title="Edit List"
+              onclick="openEditMode()"
+              title="Edit this list"
             >
               <i class="fa-solid fa-pen-to-square"></i>
             </button>
+          </header>
+
+          <div class="stage">
+            <div id="decisionResult" class="result-box">
+              <span class="placeholder">Ready?</span>
+            </div>
           </div>
-        </header>
 
-        <div class="stage">
-          <div id="decisionResult" class="result-box">
-            <span class="placeholder">Ready to roll?</span>
+          <div class="actions">
+            <button id="rollBtn" class="primary-btn" onclick="makeDecision()">
+              Decide for me
+            </button>
+          </div>
+
+          <div class="history-section">
+            <div class="history-toolbar">
+              <button class="history-toggle-btn" onclick="toggleHistory()">
+                <span
+                  ><i class="fa-solid fa-clock-rotate-left"></i> Recent
+                  Rolls</span
+                >
+                <i class="fa-solid fa-chevron-down" id="historyArrow"></i>
+              </button>
+
+              <button
+                class="clear-history-btn"
+                onclick="clearHistory()"
+                title="Clear History"
+              >
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </div>
+            <ul id="historyList" class="history-list hidden"></ul>
           </div>
         </div>
-
-        <div class="actions">
-          <button id="rollBtn" class="primary-btn" onclick="makeDecision()">
-            Decide for me
-          </button>
-        </div>
-
-        <div class="history-toggle">
-          <button class="text-btn" onclick="toggleHistory()">
-            <i class="fa-solid fa-clock-rotate-left"></i> View History
-          </button>
-        </div>
-
-        <ul id="historyList" class="history-list hidden"></ul>
-      </div>
+      </main>
 
       <div id="editorOverlay" class="editor-overlay hidden">
         <div class="editor-card">
           <div class="editor-header">
-            <h2>Edit List</h2>
-            <button class="close-btn" onclick="toggleEditMode()">
+            <h2 id="modalTitle">Edit List</h2>
+            <button class="close-btn" onclick="closeModal()">
               <i class="fa-solid fa-xmark"></i>
             </button>
           </div>
@@ -68,7 +93,7 @@
               <label>List Title</label>
               <input
                 type="text"
-                id="listTitle"
+                id="listTitleInput"
                 placeholder="e.g. Dinner Options"
               />
             </div>
