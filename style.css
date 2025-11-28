@@ -407,8 +407,67 @@ body {
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
-.editor-header h2 {
-    color: white;
+.editor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 10px;
+}
+
+.editor-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    gap: 15px;
+}
+
+.editor-footer .primary-btn {
+    width: auto;
+    padding: 12px 24px;
+}
+
+.option-input-wrapper {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    align-items: center;
+}
+
+.editor-footer .danger-btn {
+    width: auto;
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+.option-input-wrapper input[type="text"] {
+    flex: 1;
+    width: auto;
+    margin-bottom: 0;
+}
+
+.remove-option-btn {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    color: #ef4444;
+    cursor: pointer;
+    padding: 5px;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease;
+}
+
+.remove-option-btn:hover {
+    transform: scale(1.2);
+    background: transparent;
 }
 
 .close-btn {
@@ -479,19 +538,6 @@ input[type="text"]:focus {
 .danger-btn:hover {
     background: rgba(239, 68, 68, 0.2);
     color: white;
-}
-
-.remove-option-btn {
-    background: none;
-    border: none;
-    color: #ef4444;
-    cursor: pointer;
-    padding: 0 10px;
-    transition: 0.2s;
-}
-
-.remove-option-btn:hover {
-    transform: scale(1.2);
 }
 
 /* --- ANIMATIONS --- */
