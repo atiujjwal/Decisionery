@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Decision Maker</title>
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap"
       rel="stylesheet"
     />
     <link
@@ -15,10 +15,22 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
+    <div class="background-scene">
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+      <div class="grid-floor"></div>
+    </div>
+
     <div class="app-layout">
-      <aside class="sidebar">
+      <aside class="sidebar glass-panel">
         <div class="sidebar-header">
-          <div class="logo"><i class="fa-solid fa-dice-d20"></i> Decider</div>
+          <div class="logo">
+            <i
+              class="fa-solid fa-dice-d20 fa-spin-pulse"
+              style="--fa-animation-duration: 3s"
+            ></i>
+            <span>DECIDER</span>
+          </div>
         </div>
 
         <div class="sidebar-actions">
@@ -27,12 +39,12 @@
           </button>
         </div>
 
-        <div class="list-label">MY LISTS</div>
+        <div class="list-label">YOUR COLLECTIONS</div>
         <div id="sidebarListContainer" class="list-nav"></div>
       </aside>
 
       <main class="main-content">
-        <div class="card">
+        <div class="card glass-panel floating-card">
           <header class="card-header">
             <h2 id="currentListTitle">Loading...</h2>
             <button
@@ -45,14 +57,19 @@
           </header>
 
           <div class="stage">
+            <div class="stage-ring"></div>
             <div id="decisionResult" class="result-box">
-              <span class="placeholder">Ready?</span>
+              <span class="placeholder">READY</span>
             </div>
           </div>
 
           <div class="actions">
-            <button id="rollBtn" class="primary-btn" onclick="makeDecision()">
-              Decide for me
+            <button
+              id="rollBtn"
+              class="primary-btn pulse-btn"
+              onclick="makeDecision()"
+            >
+              DECIDE FOR ME
             </button>
           </div>
 
@@ -60,8 +77,7 @@
             <div class="history-toolbar">
               <button class="history-toggle-btn" onclick="toggleHistory()">
                 <span
-                  ><i class="fa-solid fa-clock-rotate-left"></i> Recent
-                  Rolls</span
+                  ><i class="fa-solid fa-clock-rotate-left"></i> History</span
                 >
                 <i class="fa-solid fa-chevron-down" id="historyArrow"></i>
               </button>
@@ -80,7 +96,7 @@
       </main>
 
       <div id="editorOverlay" class="editor-overlay hidden">
-        <div class="editor-card">
+        <div class="editor-card glass-panel">
           <div class="editor-header">
             <h2 id="modalTitle">Edit List</h2>
             <button class="close-btn" onclick="closeModal()">
