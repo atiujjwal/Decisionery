@@ -1,41 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Decision Maker</title>
-    <link rel="apple-touch-icon" sizes="180x180" href="https://favicon.io/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="https://favicon.io/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="https://favicon.io/favicon-16x16.png">
-    <link rel="stylesheet" href="style.css">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="style.css" />
   </head>
-
   <body>
-    <div id="container">
-        <h1>Decision Maker</h1>
+    <div class="app-container">
+      <div class="card">
+        <header class="card-header">
+          <div class="logo">
+            <i class="fa-solid fa-dice-d20"></i> Decision Maker
+          </div>
+          <div class="controls">
+            <select id="decisionLists" onchange="handleListChange()"></select>
+            <button
+              class="icon-btn"
+              onclick="toggleEditMode()"
+              title="Edit List"
+            >
+              <i class="fa-solid fa-pen-to-square"></i>
+            </button>
+          </div>
+        </header>
 
-        <div class="decision-section">
-            <label for="decisionLists">Choose a decision:</label>
-            <select id="decisionLists" onchange="selectList()"></select>
-            <button onclick="makeDecision()">Make Decision!</button>
+        <div class="stage">
+          <div id="decisionResult" class="result-box">
+            <span class="placeholder">Ready to roll?</span>
+          </div>
         </div>
 
-        <div id="decisionResult"></div>
-
-        <div class="custom-list-section">
-            <h2>Create/Edit a List</h2>
-            <label for="listTitle">Title:</label>
-            <input type="text" id="listTitle" placeholder="e.g., Dinner Options">
-            <div id="optionsContainer"></div>
-            <button onclick="addOptionInput()">+ Add Option</button>
-            <button onclick="saveList()">Save List</button>
-            <button onclick="deleteList()">Delete List</button>
+        <div class="actions">
+          <button id="rollBtn" class="primary-btn" onclick="makeDecision()">
+            Decide for me
+          </button>
         </div>
 
-        <div id="historyContainer">
-            <h2>Roll History <button onclick="clearHistory()">Clear History</button></h2>
-            <ul id="historyList"></ul>
+        <div class="history-toggle">
+          <button class="text-btn" onclick="toggleHistory()">
+            <i class="fa-solid fa-clock-rotate-left"></i> View History
+          </button>
         </div>
+
+        <ul id="historyList" class="history-list hidden"></ul>
+      </div>
+
+      <div id="editorOverlay" class="editor-overlay hidden">
+        <div class="editor-card">
+          <div class="editor-header">
+            <h2>Edit List</h2>
+            <button class="close-btn" onclick="toggleEditMode()">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+
+          <div class="editor-body">
+            <div class="form-group">
+              <label>List Title</label>
+              <input
+                type="text"
+                id="listTitle"
+                placeholder="e.g. Dinner Options"
+              />
+            </div>
+
+            <label>Options</label>
+            <div id="optionsContainer" class="options-list"></div>
+
+            <button class="secondary-btn full-width" onclick="addOptionInput()">
+              <i class="fa-solid fa-plus"></i> Add Option
+            </button>
+          </div>
+
+          <div class="editor-footer">
+            <button id="deleteBtn" class="danger-btn" onclick="deleteList()">
+              Delete
+            </button>
+            <button class="primary-btn" onclick="saveList()">
+              Save Changes
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
+
     <script src="index.js"></script>
   </body>
 </html>
