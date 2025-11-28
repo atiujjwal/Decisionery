@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8">
-    <title>Dice Rollar</title>
+    <title>Decision Maker</title>
     <link rel="apple-touch-icon" sizes="180x180" href="https://favicon.io/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="https://favicon.io/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="https://favicon.io/favicon-16x16.png">
@@ -11,18 +11,30 @@
 
   <body>
     <div id="container">
-        <h1>Dice Rollar</h1>
-        <label># of Dice</label>
-        <input type="number" value="1" min="1" id="numOfDice">
-        <button onclick="rollDice()">Roll Dice</button>
+        <h1>Decision Maker</h1>
 
-        <div id="diceResult"></div>
-        <div id="diceImages"></div>
+        <div class="decision-section">
+            <label for="decisionLists">Choose a decision:</label>
+            <select id="decisionLists" onchange="selectList()"></select>
+            <button onclick="makeDecision()">Make Decision!</button>
+        </div>
+
+        <div id="decisionResult"></div>
+
+        <div class="custom-list-section">
+            <h2>Create/Edit a List</h2>
+            <label for="listTitle">Title:</label>
+            <input type="text" id="listTitle" placeholder="e.g., Dinner Options">
+            <div id="optionsContainer"></div>
+            <button onclick="addOptionInput()">+ Add Option</button>
+            <button onclick="saveList()">Save List</button>
+            <button onclick="deleteList()">Delete List</button>
+        </div>
+
         <div id="historyContainer">
             <h2>Roll History <button onclick="clearHistory()">Clear History</button></h2>
             <ul id="historyList"></ul>
         </div>
-        <audio id="diceRollSound" src="sound/ShakeRollSound2.mp3"></audio>
     </div>
     <script src="index.js"></script>
   </body>
